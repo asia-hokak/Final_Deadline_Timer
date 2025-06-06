@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>同學...你的專案...好像還沒交</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet" />
+<style>
+  body {
+    margin: 0; padding: 0;
+    background: #000011; /* 深夜藍黑色 */
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Orbitron', monospace;
+    color: #cce6ff; /* 銀藍色文字 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+  .stars {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .star {
+    position: absolute;
+    background: #a3c1ff; /* 較淡銀藍 */
+    border-radius: 50%;
+    opacity: 0.7;
+    animation-name: twinkle, floatAround;
+    animation-iteration-count: infinite, infinite;
+    animation-direction: alternate, alternate;
+    animation-timing-function: ease-in-out, ease-in-out;
+    filter: drop-shadow(0 0 4px #7aaaff);
+    --dx: 1;
+    --dy: 1;
+  }
+
+  @keyframes twinkle {
+    from {opacity: 0.3;}
+    to {opacity: 1;}
+  }
+
+  @keyframes floatAround {
+    0%   { transform: translate(0, 0); }
+    25%  { transform: translate(calc(var(--dx) * 0.3px), calc(var(--dy) * -0.3px)); }
+    50%  { transform: translate(0, calc(var(--dy) * 0.3px)); }
+    75%  { transform: translate(calc(var(--dx) * -0.3px), 0); }
+    100% { transform: translate(0, 0); }
+  }
+
+  .shooting-star {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 150px;
+    height: 2px;
+    background: linear-gradient(-45deg, #cce6ff, rgba(204,230,255,0));
+    border-radius: 100%;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 2;
+    filter: drop-shadow(0 0 8px #99bbff);
+    transform: rotate(45deg);
+  }
+
+  @keyframes shooting {
+    0% {
+      opacity: 1;
+      transform: translate(0, 0) rotate(45deg);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(600px, 400px) rotate(45deg);
+    }
+  }
+
+  h1 {
+    font-size: 2em;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+    color: #99bbff;
+    text-shadow:
+      0 0 5px #88aaff,
+      0 0 10px #7799ff,
+      0 0 20px #6688ff;
+    position: relative;
+    z-index: 1;
+  }
+
+  #countdown {
+    font-size: 2.5em;
+    background-color: #111633; /* 深藍灰背景 */
+    padding: 30px 50px;
+    border-radius: 15px;
+    box-shadow:
+      0 0 20px rgba(102, 136, 255, 0.6),
+      inset 0 0 15px rgba(102, 136, 255, 0.3);
+    border: 2px solid #4466cc;
+    color: #cce6ff;
+    letter-spacing: 1.5px;
+    position: relative;
+    z-index: 1;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+  }
+
+  .seconds.pulse {
+    animation: pulse 0.3s ease-in-out;
+    display: inline-block;
+  }
+</style>
+
+
+</head>
+<body>
+  <div class="stars" id="stars"></div>
+  <div class="shooting-star" id="shootingStar"></div>
+
+  <h1>Time left until your project submission...</h1>
+  <div id="countdown">Loading...</div>
+
+<script>
+  const starsContainer = document.getElementById('stars');
+
+  // 產生星星
+  const starCount = 100;
+  for (let i = 0; i < starCount; i++) {
+    const star = document.createElement('div');
+    star.classList.add('star');
+
+    const size = Math.random() * 2 + 0.5;
+    star.style.width = size + 'px';
+    star.style.height = size + 'px';
+
+    star.style.top = Math.random() * 100 + 'vh';
+    star.style.left = Math.random() * 100 + 'vw';
+
+    star.style.animationDuration = (Math.random() * 2 + 1) + 's, ' + (6 + Math.random() * 4) + 's';
+
+    // 隨機方向 -1 或 1
+    const dx = Math.random() < 0.5 ? -1 : 1;
+    const dy = Math.random() < 0.5 ? -1 : 1;
+    star.style.setProperty('--dx', dx);
+    star.style.setProperty('--dy', dy);
+
+    // 隨機延遲，避免同步
+    star.style.animationDelay = (Math.random() * 6) + 's, ' + (Math.random() * 6) + 's';
+
+    starsContainer.appendChild(star);
+  }
+
+  const countdownElement = document.getElementById('countdown');
+  const targetDate = new Date("2025-06-10T11:00:00Z"); // GMT+8 to UTC
+
+  const shootingStar = document.getElementById('shootingStar');
+
+  // 觸發流星動畫
+  function triggerShootingStar() {
+    // 隨機起始位置（左上區域，top: 5~20vh, left: 5~20vw）
+    const startTop = 5 + Math.random() * 15;
+    const startLeft = 5 + Math.random() * 15;
+    shootingStar.style.top = startTop + 'vh';
+    shootingStar.style.left = startLeft + 'vw';
+
+    // 重新觸發動畫
+    shootingStar.style.animation = 'none';
+    // 強制重排使動畫能重播
+    void shootingStar.offsetWidth;
+    shootingStar.style.animation = 'shooting 1s ease forwards';
+  }
+
+  let lastMinute = null;
+
+  function updateCountdown() {
+    const now = new Date();
+    const diff = targetDate - now;
+
+    if (diff <= 0) {
+      countdownElement.textContent = "Time's up! QQ";
+      return;
+    }
+
+    const totalSeconds = Math.floor(diff / 1000);
+    const days = Math.floor(totalSeconds / (60 * 60 * 24));
+    const hours = Math.floor((totalSeconds / 3600) % 24);
+    const minutes = Math.floor((totalSeconds / 60) % 60);
+    const seconds = totalSeconds % 60;
+
+    // 每秒跳動秒數動畫
+    const secondsSpan = document.querySelector('.seconds');
+    if (secondsSpan) {
+      secondsSpan.textContent = seconds;
+      secondsSpan.classList.remove('pulse');
+      void secondsSpan.offsetWidth;
+      secondsSpan.classList.add('pulse');
+    } else {
+      countdownElement.innerHTML =
+        `${days} days ${hours} hours ${minutes} minutes <span class="seconds pulse">${seconds}</span> seconds`;
+    }
+
+    // 每分鐘秒數為0時觸發流星
+    if (lastMinute !== minutes && seconds === 0) {
+      lastMinute = minutes;
+      triggerShootingStar();
+    }
+  }
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+</script>
+</body>
+</html>
